@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: My Fancy API
+  version: 1.0.0
+  description: My fancy API description
+paths:
+  /accounts/:
+    get:
+      operationId: accounts_list
+      summary: Accounts List
+      tags:
+      - Accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+          description: Ok
+    post:
+      operationId: account_create
+      summary: Create Account
+      tags:
+      - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccount'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccount'
+          description: Created
+  /accounts/{id}/:
+    get:
+      operationId: accounts_retrieve
+      summary: Retrieve Account
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this account.
+        required: true
+      tags:
+      - Accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: Ok
+    put:
+      operationId: accounts_update
+      summary: Update Account
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /accounts/{id}/disable/:
+    patch:
+      operationId: accounts_disable
+      summary: Disable Account
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          readOnly: true
+    CreateAccount:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - name
+      - email
+      - password
+  securitySchemes:
+    jwtAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "JWT"
